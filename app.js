@@ -1,45 +1,32 @@
 const express = require('express');
-const userRoutes = require('./routes/userRoutes')
-const lawyerRoutes = require('./routes/lawyerRoutes')
-const clientRoutes = require('./routes/clientRoutes')
-const cors = require('cors')
-
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-// app.use(cors({ origin: 'http://localhost:5173' }));
+const userRoutes = require('./routes/userRoutes');
+const lawyerRoutes = require('./routes/lawyerRoutes');
+const clientRoutes = require('./routes/clientRoutes');
+const cors = require('cors');
 const mongoose = require('mongoose');
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5175","https://reliable-halva-dd92c9.netlify.app"];
+const app = express();
 
+// Enable CORS for all origins
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+  origin: '*', // allow all domains
+  credentials: true
 }));
 
+app.use(express.json());
 
-mongoose.connect("mongodb+srv://sakthi-user:mernpassword123@recipe.o8rvaih.mongodb.net/consultant?retryWrites=true&w=majority&appName=recipe").then (()=>{
-    console.log("mongoDb conncected");
-});
+mongoose.connect("mongodb+srv://sakthi-user:mernpassword123@recipe.o8rvaih.mongodb.net/consultant?retryWrites=true&w=majority&appName=recipe")
+  .then(() => {
+    console.log("MongoDB connected");
+  });
 
-app.set('view engine','ejs');
+app.set('view engine', 'ejs');
 
-//login register
-app.use('/user',userRoutes);
-app.use('/lawyer',lawyerRoutes);
+// Routes
+app.use('/user', userRoutes);
+app.use('/lawyer', lawyerRoutes);
+app.use('/client', clientRoutes);
 
-//client profiles
-app.use('/client',clientRoutes);
-
-
-
-app.listen(3000,()=>{
-    console.log("server is running on port 3000");
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
